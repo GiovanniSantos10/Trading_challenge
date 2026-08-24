@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"fmt"
@@ -6,17 +6,11 @@ import (
 	"time"
 )
 
-// timeNow é substituível nos testes, pra simular expiração sem sleep real.
 var timeNow = time.Now
 
-// QuoteStore guarda cotações pendentes (em memória) e confirmadas.
-// A implementação de persistência (SQLite) vai satisfazer a mesma interface,
-// então os handlers HTTP não precisam mudar quando ela entrar.
 type QuoteStore interface {
 	SavePending(q Quote)
 	GetPending(id string) (Quote, bool)
-	// Confirm move a cotação de pending para confirmed, se ela existir e
-	// ainda não tiver expirado. Retorna a cotação confirmada.
 	Confirm(id string) (Quote, error)
 	ListConfirmed() []Quote
 }
@@ -26,8 +20,6 @@ var (
 	ErrQuoteExpired  = fmt.Errorf("quote expired")
 )
 
-// MemoryStore é a implementação em memória de QuoteStore, usada até o
-// passo da persistência SQLite entrar.
 type MemoryStore struct {
 	mu        sync.Mutex
 	pending   map[string]Quote

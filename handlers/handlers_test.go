@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"bytes"
@@ -39,7 +39,7 @@ func TestCreateQuote_NonPositiveMXN(t *testing.T) {
 
 func TestConfirmQuote_NotFound(t *testing.T) {
 	h := &QuoteHandler{Store: NewMemoryStore()}
-	mux := newMux(h)
+	mux := NewMux(h)
 
 	req := httptest.NewRequest(http.MethodPost, "/quotes/nao-existe/confirm", nil)
 	rec := httptest.NewRecorder()
@@ -59,7 +59,7 @@ func TestConfirmQuote_Expired(t *testing.T) {
 	store := NewMemoryStore()
 	store.SavePending(Quote{ID: "1", Status: StatusPending, ExpiresAt: base.Add(10 * time.Second)})
 	h := &QuoteHandler{Store: store}
-	mux := newMux(h)
+	mux := NewMux(h)
 
 	timeNow = func() time.Time { return base.Add(11 * time.Second) }
 
@@ -76,7 +76,7 @@ func TestConfirmQuote_Success(t *testing.T) {
 	store := NewMemoryStore()
 	store.SavePending(Quote{ID: "1", MXN: 100, BRL: 27.95, Status: StatusPending, ExpiresAt: timeNow().Add(10 * time.Second)})
 	h := &QuoteHandler{Store: store}
-	mux := newMux(h)
+	mux := NewMux(h)
 
 	req := httptest.NewRequest(http.MethodPost, "/quotes/1/confirm", nil)
 	rec := httptest.NewRecorder()
@@ -102,7 +102,7 @@ func TestHistory_ListsConfirmed(t *testing.T) {
 		t.Fatalf("setup Confirm() error = %v", err)
 	}
 	h := &QuoteHandler{Store: store}
-	mux := newMux(h)
+	mux := NewMux(h)
 
 	req := httptest.NewRequest(http.MethodGet, "/history", nil)
 	rec := httptest.NewRecorder()
