@@ -64,22 +64,34 @@ function App() {
 
   return (
     <main className="app">
-      <h1>Cotador BRL / MXN</h1>
-      <p className="subtitle">Informe o valor em MXN e receba a cotação em BRL, via USDT.</p>
+      <div className="swap-card">
+        <div className="swap-card-header">
+          <h1>Cotador</h1>
+          <span className="pair-pill">MXN → BRL</span>
+        </div>
 
-      <QuoteForm onQuote={handleQuote} loading={loading} />
+        <QuoteForm onQuote={handleQuote} loading={loading} locked={Boolean(quote)} />
 
-      {error && <p className="error">{error}</p>}
+        {/* Só indica que o fluxo desce de uma linha pra outra — não é um
+            botão, cotação aqui é sempre nessa única direção (sem alternar). */}
+        <div className="swap-divider" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
 
-      <QuoteResult
-        quote={quote}
-        onConfirm={handleConfirm}
-        onExpire={handleExpire}
-        confirming={confirming}
-      />
+        <QuoteResult
+          quote={quote}
+          onConfirm={handleConfirm}
+          onExpire={handleExpire}
+          confirming={confirming}
+        />
+
+        {error && <p className="error">{error}</p>}
+      </div>
 
       <section className="history-section">
-        <h2>Histórico</h2>
+        <h2>Atividade recente</h2>
         <History quotes={history} />
       </section>
     </main>

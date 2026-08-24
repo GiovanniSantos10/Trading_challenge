@@ -9,24 +9,24 @@ function History({ quotes }) {
   }
 
   return (
-    <table className="history-table">
-      <thead>
-        <tr>
-          <th>MXN</th>
-          <th>BRL</th>
-          <th>Confirmada em</th>
-        </tr>
-      </thead>
-      <tbody>
-        {quotes.map((q) => (
-          <tr key={q.id}>
-            <td>{formatMXN(q.mxn)}</td>
-            <td>{formatBRL(q.brl)}</td>
-            <td>{new Date(q.created_at).toLocaleString("pt-BR")}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <ul className="history-list">
+      {quotes.map((q) => (
+        <li key={q.id} className="history-item">
+          <div className="history-item-pair">
+            <span className="history-item-icon" aria-hidden="true">
+              →
+            </span>
+            <div>
+              <div className="history-item-amounts">
+                {formatMXN(q.mxn)} <span className="history-item-arrow">→</span> {formatBRL(q.brl)}
+              </div>
+              <div className="history-item-time">{new Date(q.created_at).toLocaleString("pt-BR")}</div>
+            </div>
+          </div>
+          <span className="history-item-status">confirmada</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 

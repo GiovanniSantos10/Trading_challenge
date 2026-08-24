@@ -1,107 +1,272 @@
 .app {
-  max-width: 480px;
+  max-width: 420px;
   margin: 0 auto;
-  padding: 32px 20px 64px;
+  padding: 48px 20px 80px;
 }
 
-h1 {
-  font-size: 28px;
-  margin: 0 0 4px;
+/* ---- card do "swap" ---- */
+
+.swap-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: var(--shadow);
 }
 
-.subtitle {
-  color: var(--text-muted);
-  margin-bottom: 24px;
-}
-
-.quote-form-row {
+.swap-card-header {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 4px 16px;
 }
 
-label {
+.swap-card-header h1 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.pair-pill {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--pill-text);
+  background: var(--pill-bg);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.swap-row {
+  background: var(--row-bg);
+  border: 1px solid var(--row-border);
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+.row-label {
   display: block;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
   margin-bottom: 6px;
 }
 
-input,
-button {
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  padding: 10px 12px;
+.row-label-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
 }
 
-input {
+.swap-row-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.swap-row-main input {
   flex: 1;
-  background: var(--surface);
-  color: var(--text);
-}
-
-button {
-  background: var(--accent);
-  color: white;
+  min-width: 0;
   border: none;
-  cursor: pointer;
-  white-space: nowrap;
+  background: transparent;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text);
+  padding: 0;
 }
 
-button:disabled {
-  opacity: 0.6;
+.swap-row-main input:focus {
+  outline: none;
+}
+
+.swap-row-main input::-webkit-outer-spin-button,
+.swap-row-main input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.swap-row-main input:disabled {
+  color: var(--text-muted);
+}
+
+.swap-amount {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.swap-amount.placeholder {
+  color: var(--text-muted);
+}
+
+.token-pill {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--pill-bg);
+  color: var(--pill-text);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+/* Só um indicador de fluxo (linha de cima "vira" a de baixo), sem forma de
+   botão/círculo — pra não parecer clicável. Não existe alternância de
+   direção nesta cotadora: o valor sempre entra em MXN e sai em BRL. */
+.swap-divider {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+  color: var(--text-muted);
+}
+
+/* ---- botão principal ---- */
+
+.cta {
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-text);
+  background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.05s ease;
+}
+
+.cta:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.cta:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.cta:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
+/* ---- contador de expiração ---- */
+
+.countdown-pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.countdown-ok {
+  background: rgba(23, 196, 133, 0.15);
+  color: var(--success);
+}
+
+.countdown-warning {
+  background: rgba(245, 165, 36, 0.15);
+  color: var(--warning);
+}
+
+.countdown-urgent {
+  background: rgba(244, 73, 95, 0.15);
+  color: var(--danger);
+}
+
 .error {
-  color: var(--error);
-  margin-top: 12px;
+  margin: 12px 4px 0;
+  font-size: 13px;
+  color: var(--danger);
 }
 
-.quote-result {
-  margin-top: 24px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
-}
-
-.quote-amount {
-  font-size: 18px;
-  margin: 0 0 8px;
-}
-
-.countdown {
-  color: var(--text-muted);
-  margin: 0 0 12px;
-}
-
-.countdown-expired {
-  color: var(--error);
-}
+/* ---- histórico ---- */
 
 .history-section {
-  margin-top: 40px;
+  max-width: 420px;
+  margin: 32px auto 0;
+  padding: 0 20px;
+}
+
+.history-section h2 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 12px 4px;
 }
 
 .history-empty {
   color: var(--text-muted);
-}
-
-.history-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.history-table th,
-.history-table td {
-  text-align: left;
-  padding: 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-.history-table th {
-  color: var(--text-muted);
-  font-weight: 500;
   font-size: 14px;
+  padding: 16px 4px;
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.history-item-pair {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.history-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pill-bg);
+  color: var(--pill-text);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.history-item-amounts {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item-arrow {
+  color: var(--text-muted);
+  margin: 0 2px;
+}
+
+.history-item-time {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.history-item-status {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--success);
+  background: rgba(23, 196, 133, 0.12);
+  padding: 4px 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
 }

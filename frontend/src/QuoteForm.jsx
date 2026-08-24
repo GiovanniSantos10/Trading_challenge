@@ -3,7 +3,11 @@ import { useState } from "react";
 // QuoteForm não guarda o resultado da cotação — só coleta o valor em MXN e
 // avisa o componente pai (onQuote) quando o usuário confirma o envio. Quem
 // decide o que fazer com a cotação é o App, não este componente.
-function QuoteForm({ onQuote, loading }) {
+//
+// "locked" (true enquanto existe uma cotação pendente) esconde o botão
+// "Cotar" e desabilita o input — igual ao passo de "review" de uma corretora,
+// o valor fica travado enquanto a cotação atual está valendo.
+function QuoteForm({ onQuote, loading, locked }) {
   const [mxn, setMxn] = useState("");
 
   function handleSubmit(event) {
@@ -16,23 +20,31 @@ function QuoteForm({ onQuote, loading }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="quote-form">
-      <label htmlFor="mxn">Valor em MXN</label>
-      <div className="quote-form-row">
-        <input
-          id="mxn"
-          type="number"
-          min="0"
-          step="0.01"
-          placeholder="1000"
-          value={mxn}
-          onChange={(event) => setMxn(event.target.value)}
-          disabled={loading}
-        />
-        <button type="submit" disabled={loading}>
+    <form onSubmit={handleSubmit}>
+      <div className="swap-row">
+        <label htmlFor="mxn-input" className="row-label">
+          Valor a enviar
+        </label>
+        <div className="swap-row-main">
+          <input
+            id="mxn-input"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="0,00"
+            value={mxn}
+            onChange={(event) => setMxn(event.target.value)}
+            disabled={loading || locked}
+          />
+          <span className="token-pill">MXN</span>
+        </div>
+      </div>
+
+      {!locked && (
+        <button type="submit" className="cta" disabled={loading || !mxn}>
           {loading ? "Cotando..." : "Cotar"}
         </button>
-      </div>
+      )}
     </form>
   );
 }

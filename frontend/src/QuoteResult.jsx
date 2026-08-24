@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { formatBRL, formatMXN } from "./format";
+import { formatBRL } from "./format";
 
 // QuoteResult é dona do contador regressivo: recalcula secondsLeft a partir
 // de quote.expires_at (o servidor é a fonte da verdade do prazo, o front só
@@ -33,19 +33,32 @@ function QuoteResult({ quote, onConfirm, onExpire, confirming }) {
     if (expired) onExpire();
   }, [expired, onExpire]);
 
-  if (!quote) return null;
+  // Cor do badge muda conforme o prazo aperta — pista visual de urgência,
+  // igual ao que corretoras cripto usam pra cotação com validade curta.
+  const urgency = secondsLeft <= 3 ? "urgent" : secondsLeft <= 6 ? "warning" : "ok";
 
   return (
-    <div className="quote-result">
-      <p className="quote-amount">
-        {formatMXN(quote.mxn)} = <strong>{formatBRL(quote.brl)}</strong>
-      </p>
-      <p className={expired ? "countdown countdown-expired" : "countdown"}>
-        {expired ? "Cotação expirada" : `Expira em ${secondsLeft}s`}
-      </p>
-      <button onClick={() => onConfirm(quote.id)} disabled={expired || confirming}>
-        {confirming ? "Confirmando..." : "Confirmar cotação"}
-      </button>
+    <div className="swap-row">
+      <div className="row-label-line">
+        <span className="row-label">Você paga</span>
+        {quote && (
+          <span className={`countdown-pill countdown-${expired ? "urgent" : urgency}`}>
+            {expired ? "expirada" : `${secondsLeft}s`}
+          </span>
+        )}
+      </div>
+      <div className="swap-row-main">
+        <span className={quote ? "swap-amount" : "swap-amount placeholder"}>
+          {quote ? formatBRL(quote.brl) : "0,00"}
+        </span>
+        <span className="token-pill">BRL</span>
+      </div>
+
+      {quote && (
+        <button className="cta" onClick={() => onConfirm(quote.id)} disabled={expired || confirming}>
+          {confirming ? "Confirmando..." : "Confirmar cotação"}
+        </button>
+      )}
     </div>
   );
 }
