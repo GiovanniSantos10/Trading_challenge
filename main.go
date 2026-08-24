@@ -13,10 +13,6 @@ import (
 
 type LivePriceProvider struct{}
 
-// GetPrices busca os 3 tickers em paralelo (exigência do enunciado) — cada
-// goroutine escreve só na sua própria variável de resultado, então não há
-// dado compartilhado entre elas e não precisa de mutex/canal: o WaitGroup já
-// garante que as 3 escritas terminaram antes de qualquer leitura abaixo dele.
 func (LivePriceProvider) GetPrices() (handlers.Prices, error) {
 	var (
 		wg sync.WaitGroup

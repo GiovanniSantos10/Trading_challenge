@@ -6,8 +6,6 @@ import (
 	"testing"
 )
 
-// withMockBinance sobe um httptest.Server e aponta binanceBaseURL pra ele
-// durante o teste, restaurando no fim.
 func withMockBinance(t *testing.T, handler http.HandlerFunc) *httptest.Server {
 	t.Helper()
 	srv := httptest.NewServer(handler)
@@ -20,7 +18,6 @@ func withMockBinance(t *testing.T, handler http.HandlerFunc) *httptest.Server {
 	return srv
 }
 
-// Formato real da resposta da Binance: bidPrice/askPrice vêm como STRING.
 const realBinanceResponse = `{
 	"symbol": "BTCUSDT",
 	"bidPrice": "61345.12000000",
@@ -54,7 +51,6 @@ func TestGetBookTicker_PricesAreParsedCorrectly(t *testing.T) {
 
 func TestGetBookTicker_ReturnsErrorOnRequestFailure(t *testing.T) {
 	restore := binanceBaseURL
-	// porta sem nada escutando -> http.Get retorna erro de conexão, sem precisar de rede real
 	binanceBaseURL = "http://127.0.0.1:1"
 	defer func() { binanceBaseURL = restore }()
 

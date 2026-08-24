@@ -34,9 +34,6 @@ func TestCreateQuote_NonPositiveMXN(t *testing.T) {
 	}
 }
 
-// NOTA(você): quando CalculateBRL estiver implementada, adicione aqui um teste
-// de sucesso de POST /quotes usando um PriceProvider fake (valores fixos).
-
 func TestConfirmQuote_NotFound(t *testing.T) {
 	h := &QuoteHandler{Store: NewMemoryStore()}
 	mux := NewMux(h)

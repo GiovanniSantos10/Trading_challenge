@@ -1,12 +1,5 @@
 import { useState } from "react";
 
-// QuoteForm não guarda o resultado da cotação — só coleta o valor em MXN e
-// avisa o componente pai (onQuote) quando o usuário confirma o envio. Quem
-// decide o que fazer com a cotação é o App, não este componente.
-//
-// "locked" (true enquanto existe uma cotação pendente) esconde o botão
-// "Cotar" e desabilita o input — igual ao passo de "review" de uma corretora,
-// o valor fica travado enquanto a cotação atual está valendo.
 function QuoteForm({ onQuote, loading, locked }) {
   const [mxn, setMxn] = useState("");
 

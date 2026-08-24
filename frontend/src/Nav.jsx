@@ -1,6 +1,3 @@
-// Nav é "burro": só recebe a rota atual e avisa o pai quando o usuário quer
-// navegar. <a href> de verdade (com preventDefault) em vez de <button> —
-// mantém foco/teclado/"abrir em nova aba" funcionando como um link normal.
 function Nav({ path, onNavigate }) {
   function linkProps(to) {
     return {

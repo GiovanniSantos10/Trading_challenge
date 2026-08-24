@@ -78,9 +78,6 @@ func TestSQLiteStore_ConfirmNotFound(t *testing.T) {
 	}
 }
 
-// TestSQLiteStore_PersistsAcrossReopen prova que confirmadas sobrevivem a
-// fechar e reabrir o arquivo — o motivo de existir o SQLiteStore em vez do
-// MemoryStore.
 func TestSQLiteStore_PersistsAcrossReopen(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "test.db")
 

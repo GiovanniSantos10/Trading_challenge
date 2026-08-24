@@ -9,15 +9,12 @@ import (
 	"time"
 )
 
-// Prices reúne as cotações necessárias pra CalculateBRL numa única chamada.
 type Prices struct {
 	AskBinanceUSDTBRL float64
 	AskOKXUSDTBRL     float64
 	BidBinanceUSDTMXN float64
 }
 
-// PriceProvider busca as cotações atuais nas exchanges. A implementação real
-// (Binance + OKX) vive em binance.go.
 type PriceProvider interface {
 	GetPrices() (Prices, error)
 }

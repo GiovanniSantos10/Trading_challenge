@@ -7,31 +7,21 @@ import HistoryPage from "./HistoryPage";
 import "./App.css";
 
 function App() {
-  // Rota atual ("/" ou "/historico") — as duas páginas pedidas no enunciado.
   const [path, navigate] = useRoute();
 
-  // Cada pedaço de UI vem de uma variável de estado — nada fixo no JSX. Tudo
-  // fica aqui no App (não em cada página) porque trocar de rota não
-  // desmonta o App — o estado sobrevive à navegação entre as duas páginas.
-  const [quote, setQuote] = useState(null); // cotação pendente atual, ou null
-  const [history, setHistory] = useState([]); // cotações confirmadas
-  const [loading, setLoading] = useState(false); // criando cotação
-  const [confirming, setConfirming] = useState(false); // confirmando cotação
+  const [quote, setQuote] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState(null);
 
-  // useCallback: a função precisa ter identidade estável entre renders,
-  // porque QuoteResult a usa como dependência do useEffect do contador —
-  // sem isso, o contador reiniciaria o intervalo a cada render do App.
   const refreshHistory = useCallback(async () => {
     try {
       const list = await getHistory();
       setHistory(list);
-    } catch {
-      // histórico é secundário: se falhar, não interrompe o fluxo principal.
-    }
+    } catch {}
   }, []);
 
-  // Carrega o histórico uma vez, quando o componente monta.
   useEffect(() => {
     refreshHistory();
   }, [refreshHistory]);

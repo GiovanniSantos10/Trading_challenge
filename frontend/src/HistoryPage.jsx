@@ -1,7 +1,5 @@
 import History from "./History";
 
-// HistoryPage é a segunda página pedida no enunciado: lista as cotações
-// confirmadas. Sem filtro, sem paginação — só recebe a lista pronta do App.
 function HistoryPage({ quotes }) {
   return (
     <div className="swap-card">

@@ -4,8 +4,6 @@
   padding: 48px 20px 80px;
 }
 
-/* ---- navegação entre as 2 páginas ---- */
-
 .nav {
   display: flex;
   gap: 4px;
@@ -32,8 +30,6 @@
   color: var(--text);
   box-shadow: var(--shadow);
 }
-
-/* ---- card do "swap" ---- */
 
 .swap-card {
   background: var(--card-bg);
@@ -143,17 +139,12 @@
   border-radius: 999px;
 }
 
-/* Só um indicador de fluxo (linha de cima "vira" a de baixo), sem forma de
-   botão/círculo — pra não parecer clicável. Não existe alternância de
-   direção nesta cotadora: o valor sempre entra em MXN e sai em BRL. */
 .swap-divider {
   display: flex;
   justify-content: center;
   padding: 4px 0;
   color: var(--text-muted);
 }
-
-/* ---- botão principal ---- */
 
 .cta {
   width: 100%;
@@ -182,8 +173,6 @@
   cursor: not-allowed;
 }
 
-/* ---- contador de expiração ---- */
-
 .countdown-pill {
   font-size: 12px;
   font-weight: 700;
@@ -211,8 +200,6 @@
   font-size: 13px;
   color: var(--danger);
 }
-
-/* ---- histórico ---- */
 
 .history-empty {
   color: var(--text-muted);
