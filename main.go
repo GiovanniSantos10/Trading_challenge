@@ -5,31 +5,55 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
 
 	"KX_trading_challenge/exchanges"
 	"KX_trading_challenge/handlers"
 )
 
-// LivePriceProvider implementa handlers.PriceProvider buscando as cotações
-// reais na Binance e na OKX. Busca exatamente os 3 tickers que a fórmula
-// (handlers.CalculateBRL) usa — o "menor ask" entre as exchanges é decidido
-// lá dentro, não aqui.
 type LivePriceProvider struct{}
 
+// GetPrices busca os 3 tickers em paralelo (exigência do enunciado) — cada
+// goroutine escreve só na sua própria variável de resultado, então não há
+// dado compartilhado entre elas e não precisa de mutex/canal: o WaitGroup já
+// garante que as 3 escritas terminaram antes de qualquer leitura abaixo dele.
 func (LivePriceProvider) GetPrices() (handlers.Prices, error) {
-	binanceUSDTBRL, err := exchanges.GetBookTicker("USDTBRL")
-	if err != nil {
-		return handlers.Prices{}, fmt.Errorf("binance USDT/BRL: %w", err)
-	}
+	var (
+		wg sync.WaitGroup
 
-	okxUSDTBRL, err := exchanges.Get_mxn_okx("USDT-BRL")
-	if err != nil {
-		return handlers.Prices{}, fmt.Errorf("okx USDT/BRL: %w", err)
-	}
+		binanceUSDTBRL exchanges.Data_binance
+		errBinanceBRL  error
 
-	binanceUSDTMXN, err := exchanges.GetBookTicker("USDTMXN")
-	if err != nil {
-		return handlers.Prices{}, fmt.Errorf("binance USDT/MXN: %w", err)
+		okxUSDTBRL exchanges.Data_okx
+		errOKXBRL  error
+
+		binanceUSDTMXN exchanges.Data_binance
+		errBinanceMXN  error
+	)
+
+	wg.Add(3)
+	go func() {
+		defer wg.Done()
+		binanceUSDTBRL, errBinanceBRL = exchanges.GetBookTicker("USDTBRL")
+	}()
+	go func() {
+		defer wg.Done()
+		okxUSDTBRL, errOKXBRL = exchanges.Get_mxn_okx("USDT-BRL")
+	}()
+	go func() {
+		defer wg.Done()
+		binanceUSDTMXN, errBinanceMXN = exchanges.GetBookTicker("USDTMXN")
+	}()
+	wg.Wait()
+
+	if errBinanceBRL != nil {
+		return handlers.Prices{}, fmt.Errorf("binance USDT/BRL: %w", errBinanceBRL)
+	}
+	if errOKXBRL != nil {
+		return handlers.Prices{}, fmt.Errorf("okx USDT/BRL: %w", errOKXBRL)
+	}
+	if errBinanceMXN != nil {
+		return handlers.Prices{}, fmt.Errorf("binance USDT/MXN: %w", errBinanceMXN)
 	}
 
 	return handlers.Prices{
