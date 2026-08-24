@@ -23,7 +23,7 @@ function QuoteForm({ onQuote, loading, locked }) {
     <form onSubmit={handleSubmit}>
       <div className="swap-row">
         <label htmlFor="mxn-input" className="row-label">
-          Valor a enviar
+          Valor a receber
         </label>
         <div className="swap-row-main">
           <input
