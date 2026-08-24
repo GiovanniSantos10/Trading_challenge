@@ -1,0 +1,107 @@
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+h1 {
+  font-size: 28px;
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.quote-form-row {
+  display: flex;
+  gap: 8px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+input,
+button {
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+}
+
+input {
+  flex: 1;
+  background: var(--surface);
+  color: var(--text);
+}
+
+button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: var(--error);
+  margin-top: 12px;
+}
+
+.quote-result {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.quote-amount {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.countdown {
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+
+.countdown-expired {
+  color: var(--error);
+}
+
+.history-section {
+  margin-top: 40px;
+}
+
+.history-empty {
+  color: var(--text-muted);
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-table th {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 14px;
+}
