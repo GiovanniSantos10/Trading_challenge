@@ -1,6 +1,9 @@
 package handlers
 
-import "time"
+import (
+	"math"
+	"time"
+)
 
 type QuoteStatus string
 
@@ -31,8 +34,8 @@ type Quote struct {
 //   - 1.006 é a margem fixa aplicada sobre o resultado.
 //   - O arredondamento para cima (teto), com 2 casas decimais, acontece UMA ÚNICA VEZ, no
 //     final de todo o cálculo — não arredonde valores intermediários.
-//
-// TODO(você): implementar.
 func CalculateBRL(mxn, askBinanceUSDTBRL, askOKXUSDTBRL, bidBinanceUSDTMXN float64) float64 {
-	panic("CalculateBRL: not implemented")
+	askUSDTBRL := min(askBinanceUSDTBRL, askOKXUSDTBRL)
+	brl := mxn / bidBinanceUSDTMXN * askUSDTBRL * 1.006
+	return math.Ceil(brl*100) / 100
 }
