@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { createQuote, confirmQuote, getHistory } from "./api";
-import QuoteForm from "./QuoteForm";
-import QuoteResult from "./QuoteResult";
-import History from "./History";
+import { useRoute } from "./useRoute";
+import Nav from "./Nav";
+import QuotePage from "./QuotePage";
+import HistoryPage from "./HistoryPage";
 import "./App.css";
 
 function App() {
-  // Cada pedaço de UI vem de uma variável de estado — nada fixo no JSX.
+  // Rota atual ("/" ou "/historico") — as duas páginas pedidas no enunciado.
+  const [path, navigate] = useRoute();
+
+  // Cada pedaço de UI vem de uma variável de estado — nada fixo no JSX. Tudo
+  // fica aqui no App (não em cada página) porque trocar de rota não
+  // desmonta o App — o estado sobrevive à navegação entre as duas páginas.
   const [quote, setQuote] = useState(null); // cotação pendente atual, ou null
   const [history, setHistory] = useState([]); // cotações confirmadas
   const [loading, setLoading] = useState(false); // criando cotação
@@ -64,36 +70,21 @@ function App() {
 
   return (
     <main className="app">
-      <div className="swap-card">
-        <div className="swap-card-header">
-          <h1>Cotador</h1>
-          <span className="pair-pill">MXN → BRL</span>
-        </div>
+      <Nav path={path} onNavigate={navigate} />
 
-        <QuoteForm onQuote={handleQuote} loading={loading} locked={Boolean(quote)} />
-
-        {/* Só indica que o fluxo desce de uma linha pra outra — não é um
-            botão, cotação aqui é sempre nessa única direção (sem alternar). */}
-        <div className="swap-divider" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-
-        <QuoteResult
+      {path === "/historico" ? (
+        <HistoryPage quotes={history} />
+      ) : (
+        <QuotePage
           quote={quote}
+          loading={loading}
+          confirming={confirming}
+          error={error}
+          onQuote={handleQuote}
           onConfirm={handleConfirm}
           onExpire={handleExpire}
-          confirming={confirming}
         />
-
-        {error && <p className="error">{error}</p>}
-      </div>
-
-      <section className="history-section">
-        <h2>Atividade recente</h2>
-        <History quotes={history} />
-      </section>
+      )}
     </main>
   );
 }
