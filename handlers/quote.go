@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"math"
 	"time"
 )
@@ -34,8 +35,16 @@ type Quote struct {
 //   - 1.006 é a margem fixa aplicada sobre o resultado.
 //   - O arredondamento para cima (teto), com 2 casas decimais, acontece UMA ÚNICA VEZ, no
 //     final de todo o cálculo — não arredonde valores intermediários.
-func CalculateBRL(mxn, askBinanceUSDTBRL, askOKXUSDTBRL, bidBinanceUSDTMXN float64) float64 {
+//
+// Retorna erro se bidBinanceUSDTMXN <= 0: um bid inválido (0 ou negativo) geraria divisão
+// por zero (+Inf) ou resultado sem sentido (BRL negativo), então é rejeitado explicitamente
+// em vez de propagar um valor inválido pro cliente.
+func CalculateBRL(mxn, askBinanceUSDTBRL, askOKXUSDTBRL, bidBinanceUSDTMXN float64) (float64, error) {
+	if bidBinanceUSDTMXN <= 0 {
+		return 0, fmt.Errorf("bidBinanceUSDTMXN inválido: %v", bidBinanceUSDTMXN)
+	}
+
 	askUSDTBRL := min(askBinanceUSDTBRL, askOKXUSDTBRL)
 	brl := mxn / bidBinanceUSDTMXN * askUSDTBRL * 1.006
-	return math.Ceil(brl*100) / 100
+	return math.Ceil(brl*100) / 100, nil
 }

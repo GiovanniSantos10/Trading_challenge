@@ -64,7 +64,11 @@ func (h *QuoteHandler) CreateQuote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	brl := CalculateBRL(req.MXN, prices.AskBinanceUSDTBRL, prices.AskOKXUSDTBRL, prices.BidBinanceUSDTMXN)
+	brl, err := CalculateBRL(req.MXN, prices.AskBinanceUSDTBRL, prices.AskOKXUSDTBRL, prices.BidBinanceUSDTMXN)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "cotação recebida das exchanges é inválida")
+		return
+	}
 
 	now := timeNow()
 	q := Quote{

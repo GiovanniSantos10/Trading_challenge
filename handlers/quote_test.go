@@ -54,9 +54,31 @@ func TestCalculateBRL(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := CalculateBRL(tt.mxn, tt.askBinanceUSDTBRL, tt.askOKXUSDTBRL, tt.bidBinanceUSDTMXN)
+			got, err := CalculateBRL(tt.mxn, tt.askBinanceUSDTBRL, tt.askOKXUSDTBRL, tt.bidBinanceUSDTMXN)
+			if err != nil {
+				t.Fatalf("CalculateBRL() error = %v, want nil", err)
+			}
 			if got != tt.want {
 				t.Errorf("CalculateBRL() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCalculateBRL_InvalidBid(t *testing.T) {
+	tests := []struct {
+		name              string
+		bidBinanceUSDTMXN float64
+	}{
+		{"bid zero", 0},
+		{"bid negativo", -1},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := CalculateBRL(1000, 5.50, 5.60, tt.bidBinanceUSDTMXN)
+			if err == nil {
+				t.Fatalf("CalculateBRL() error = nil, want non-nil para bidBinanceUSDTMXN = %v", tt.bidBinanceUSDTMXN)
 			}
 		})
 	}
