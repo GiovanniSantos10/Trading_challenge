@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { formatBRL } from "./format";
+import { formatBRL, formatRate } from "./format";
 
 // QuoteResult é dona do contador regressivo: recalcula secondsLeft a partir
 // de quote.expires_at (o servidor é a fonte da verdade do prazo, o front só
@@ -64,6 +64,8 @@ function QuoteResult({ quote, onConfirm, onExpire, confirming }) {
         </span>
         <span className="token-pill">BRL</span>
       </div>
+
+      {quote && <p className="rate-note">{formatRate(quote.brl / quote.mxn)} BRL/MXN</p>}
 
       {quote && (
         <button className="cta" onClick={() => onConfirm(quote.id)} disabled={expired || confirming}>
