@@ -2,8 +2,9 @@ package handlers
 
 import "net/http"
 
-// NewMux monta as rotas HTTP da API sobre o QuoteHandler dado.
-func NewMux(qh *QuoteHandler) *http.ServeMux {
+// NewMux monta as rotas HTTP da API sobre o QuoteHandler dado, envolvidas
+// pelo middleware de CORS.
+func NewMux(qh *QuoteHandler) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -12,5 +13,5 @@ func NewMux(qh *QuoteHandler) *http.ServeMux {
 	mux.HandleFunc("POST /quotes", qh.CreateQuote)
 	mux.HandleFunc("POST /quotes/{id}/confirm", qh.ConfirmQuote)
 	mux.HandleFunc("GET /history", qh.History)
-	return mux
+	return withCORS(mux)
 }
