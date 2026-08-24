@@ -5,28 +5,38 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"KX_trading_challenge/exchanges"
+	"KX_trading_challenge/handlers"
 )
 
-func newMux(qh *QuoteHandler) *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("ok"))
-	})
-	mux.HandleFunc("POST /quotes", qh.CreateQuote)
-	mux.HandleFunc("POST /quotes/{id}/confirm", qh.ConfirmQuote)
-	mux.HandleFunc("GET /history", qh.History)
-	return mux
-}
+// LivePriceProvider implementa handlers.PriceProvider buscando as cotações
+// reais na Binance e na OKX. Busca exatamente os 3 tickers que a fórmula
+// (handlers.CalculateBRL) usa — o "menor ask" entre as exchanges é decidido
+// lá dentro, não aqui.
+type LivePriceProvider struct{}
 
-// notImplementedPrices é um placeholder até o PriceProvider real (Binance +
-// OKX, em binance.go) estar pronto.
-//
-// TODO(você): trocar por um PriceProvider real.
-type notImplementedPrices struct{}
+func (LivePriceProvider) GetPrices() (handlers.Prices, error) {
+	binanceUSDTBRL, err := exchanges.GetBookTicker("USDTBRL")
+	if err != nil {
+		return handlers.Prices{}, fmt.Errorf("binance USDT/BRL: %w", err)
+	}
 
-func (notImplementedPrices) GetPrices() (Prices, error) {
-	return Prices{}, fmt.Errorf("price provider not implemented")
+	okxUSDTBRL, err := exchanges.Get_mxn_okx("USDT-BRL")
+	if err != nil {
+		return handlers.Prices{}, fmt.Errorf("okx USDT/BRL: %w", err)
+	}
+
+	binanceUSDTMXN, err := exchanges.GetBookTicker("USDTMXN")
+	if err != nil {
+		return handlers.Prices{}, fmt.Errorf("binance USDT/MXN: %w", err)
+	}
+
+	return handlers.Prices{
+		AskBinanceUSDTBRL: float64(binanceUSDTBRL.AskPrice),
+		AskOKXUSDTBRL:     float64(okxUSDTBRL.AskPrice),
+		BidBinanceUSDTMXN: float64(binanceUSDTMXN.BidPrice),
+	}, nil
 }
 
 func main() {
@@ -37,13 +47,23 @@ func main() {
 		addr = ":" + addr
 	}
 
-	qh := &QuoteHandler{
-		Store:  NewMemoryStore(),
-		Prices: notImplementedPrices{},
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "quotes.db"
+	}
+	store, err := handlers.NewSQLiteStore(dbPath)
+	if err != nil {
+		log.Fatalf("abrindo banco em %q: %v", dbPath, err)
+	}
+	defer store.Close()
+
+	qh := &handlers.QuoteHandler{
+		Store:  store,
+		Prices: LivePriceProvider{},
 	}
 
 	log.Printf("listening on %s", addr)
-	if err := http.ListenAndServe(addr, newMux(qh)); err != nil {
+	if err := http.ListenAndServe(addr, handlers.NewMux(qh)); err != nil {
 		log.Fatal(err)
 	}
 }
